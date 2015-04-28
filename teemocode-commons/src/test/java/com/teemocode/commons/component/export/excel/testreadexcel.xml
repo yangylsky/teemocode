@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<excel name="testBean1" className="com.hxsoft.test.util.export.excel.TestBean1" sheetName="实例数据" hasHeader="true">
+	<cloumn name="vehicleNo">
+		<type dataType="string">
+		</type>
+	</cloumn>
+	<cloumn name="ownerName">
+		<type dataType="object" name="bean2" className="com.hxsoft.test.util.export.excel.TestBean2" subDataType="string">
+		</type>
+	</cloumn>
+	<cloumn name="idex">
+		<type dataType="object" name="bean2" className="com.hxsoft.test.util.export.excel.TestBean2" subDataType="integer">
+		</type>
+	</cloumn>
+	<cloumn name="regDate">
+		<type dataType="date">
+		</type>
+	</cloumn>
+</excel>

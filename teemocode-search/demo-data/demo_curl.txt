@@ -1,0 +1,149 @@
+添加测试数据
+curl -XPUT http://localhost:9200/teemocode/route/aaa001 -d "{\"name\":\"BeiJing1days\", \"no\":\"LL-BJ-001\", \"createDate\":\"2014-02-21T14:12:12Z\", \"summary\":\"hahaha\"}"
+curl -XPUT http://localhost:9200/teemocode/route/aaa002 -d "{\"name\":\"BeiJing2days\", \"no\":\"LL-BJ-002\", \"createDate\":\"2014-02-22T14:12:12Z\", \"summary\":\"hahaha\"}"
+curl -XPUT http://localhost:9200/teemocode/route/aaa003 -d "{\"name\":\"BeiJing3days\", \"no\":\"LL-BJ-003\", \"createDate\":\"2014-02-21T14:12:12Z\", \"summary\":\"hahaha\"}"
+curl -XPUT http://localhost:9200/teemocode/route/aaa004 -d "{\"name\":\"BeiJing4days\", \"no\":\"LL-BJ-004\", \"createDate\":\"2014-02-23T14:12:12Z\", \"summary\":\"hahaha\"}"
+curl -XPUT http://localhost:9200/teemocode/route/aaa005 -d "{\"name\":\"BeiJing5days\", \"no\":\"LL-BJ-005\", \"createDate\":\"2014-02-22T14:12:12Z\", \"summary\":\"hahaha\"}"
+curl -XPUT http://localhost:9200/teemocode/route/aaa006 -d "{\"name\":\"BeiJing6days\", \"no\":\"LL-BJ-006\", \"createDate\":\"2014-02-21T16:12:12Z\", \"summary\":\"hahaha\"}"
+curl -XPUT http://localhost:9200/teemocode/route/aaa007 -d "{\"name\":\"BeiJing7days\", \"no\":\"LL-BJ-007\", \"createDate\":\"2014-02-26T14:12:12Z\", \"summary\":\"hahaha\"}"
+curl -XPUT http://localhost:9200/teemocode/route/aaa008 -d "{\"name\":\"北京8days\", \"no\":\"LL-BJ-008\", \"createDate\":\"2014-02-26T14:12:19Z\", \"summary\":\"hahaha\"}"
+
+简单查询
+curl localhost:9200/teemocode/route/aaa003
+curl localhost:9200/teemocode/route/aaa007
+curl localhost:9200/teemocode/route/aaa009?pretty=true
+
+查询指定列
+curl localhost:9200/teemocode/route/aaa003?fields=name,no
+
+删除指定Item
+curl -XDELETE http://localhost:9200/teemocode/route/aaa003
+
+检测结果是否存在
+curl -XHEAD -i http://localhost:9200/teemocode/route/aaa003
+
+
+条件查询
+	查询所有
+curl localhost:9200/teemocode/route/_search?pretty=true
+
+curl localhost:9200/teemocode/route/_search?q=name:BeiJing5days
+
+curl localhost:9200/teemocode/route/_search -d "{\"query\":{\"range\":{\"createDate\":{\"from\":\"2014-02-21T14:12:12\", \"to\":\"2014-02-22T14:12:12\"}}}}"
+
+curl localhost:9200/teemocode-test/com_teemocode_module_search_service_test_Route/_search -d "{\"query\":"{\"term\":{\"groupId\":\"12\"}}}"
+
+复杂条件查询，FilteredQuery, Facets Filter, Script, Params
+参考：http://www.elasticsearch.cn/guide/reference/query-dsl/
+
+普通查询：支持 term 或 prefix
+混合查询：must, should, must_not
+示例1：
+{
+	"filtered" : {
+		"query" : {
+			"prefix" : { "no" : "LL-BJ" }
+		},
+		"filter" : {
+			"range" : {
+				"price" : { "from" : 1000, "to" : 1500 }
+			}
+		}
+	}
+}
+
+示例2：
+{
+	"bool" : {
+		"must_not" : {
+			"term" : { "areaNo" : "009" }
+		},
+		"must" : {
+			"range" : {
+				"price" : {
+					"from" : 1000,
+					"to" : 1500,
+                    "include_lower" : true, 
+                    "include_upper" : false
+				}
+			}
+		},
+		"should" : [
+			{
+				"prefix" : { "name" : "BeiJing" }
+			}, {
+				"term" : { "no" : "006" }
+			}
+		],
+		"minimum_number_should_match" : 1,
+		"boost" : 1.0
+	}
+}
+
+示例3：
+{
+	"query": {
+		"nested": {
+			"_scope": "my_scope",
+			"path": "obj1",
+			"score_mode": "avg",
+			"query": {
+				"bool": {
+					"must": [
+						{"text": {"obj1.name": "blue"}},
+						{"range": {"obj1.count": {"gt": 3}}}
+					]
+				}
+			}
+		}
+	},
+	"facets": {
+		"facet1": {
+			"terms_stats": {
+				"key_field": "obj1.name",
+				"value_field": "obj1.count"
+			},
+			"scope": "my_scope"
+		}
+	}
+}
+
+filter条件组合,支持and, not, or
+{
+	"filtered" : {
+		"query" : {
+			"term" : { "name.first" : "shay" }
+		},
+		"filter" : {
+			"and" : [
+				{
+					"range" : { 
+						"postDate" : { 
+							"from" : "2010-03-01",
+							"to" : "2010-04-01"
+						}
+					}
+				},
+				{
+					"prefix" : { "name.second" : "ba" }
+				}
+			]
+		}
+	}
+}
+
+Script, Params
+
+"filtered" : {
+    "query" : {
+        ...
+    }, 
+    "filter" : {
+        "script" : {
+            "script" : "doc['num1'].value > param1"
+            "params" : {
+                "param1" : 5
+            }
+        }
+    }
+}
