@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>tk.teemocode</groupId>
+		<artifactId>teemocode_parent</artifactId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+
+	<groupId>tk.teemocode.module</groupId>
+	<artifactId>teemocode-module-identity</artifactId>
+	<name>teemocode-module-identity</name>
+	<description>组织机构和用户模块</description>
+	
+	<dependencies>
+		<dependency>
+			<groupId>tk.teemocode.module</groupId>
+			<artifactId>teemocode-modulebase</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+</project>

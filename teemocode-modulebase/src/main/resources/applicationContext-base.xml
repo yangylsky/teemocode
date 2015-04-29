@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans default-autowire="default" default-lazy-init="true"
+		xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+		xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+		xmlns:aop="http://www.springframework.org/schema/aop" xmlns:util="http://www.springframework.org/schema/util"
+		xsi:schemaLocation="
+				http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+				http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+				http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+				http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+				http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+				http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:/jdbc.properties</value>
+				<value>classpath*:/common-config.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- enable the configuration of transactional behavior based on annotations -->
+	<bean id="txManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager"
+			p:sessionFactory-ref="sessionFactory" />
+	
+	<aop:aspectj-autoproxy />
+			
+	<tx:annotation-driven transaction-manager="txManager" />
+
+	<bean id="dataSource" class="org.logicalcobwebs.proxool.ProxoolDataSource">
+		<property name="driver" value="${jdbc.driverClassName}" />
+		<property name="driverUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<!-- 连接池的别名 -->
+		<property name="alias" value="${proxool.alias}" />
+		<!-- proxool自动侦察各个连接状态的时间间隔(毫秒),侦察到空闲的连接就马上回收,超时的销毁.默认30秒 -->
+		<!-- 因proxool的ProxoolDataSource类有bug,当需要指定该参数时,需要覆盖该类错误的set方法.其他有些参数也类似
+			<property name="houseKeepingSleepTime" value="90000" />
+		-->
+		<property name="houseKeepingTestSql" value="${proxool.houseKeepingTestSql}" />
+		<property name="testBeforeUse" value="${proxool.testBeforeUse}" />
+		<property name="testAfterUse" value="false" />
+		<!-- 如果HouseKeeper检测到某个线程的活动时间大于这个数值,它将会杀掉这个线程,默认是300秒 -->
+		<property name="maximumActiveTime" value="3600000" />
+		<!-- 最少保持的空闲连接数,和 minimumConnectionCount不同, prototypeCount只计算空闲连接 -->
+		<property name="prototypeCount" value="${proxool.prototypeCount}" />
+		<!-- 允许最大连接数,超过了这个连接，再有请求时，就排在队列中等候，最大的等待请求数由maximum-new-connections决定 -->
+		<property name="maximumConnectionCount" value="${proxool.maximumConnectionCount}" />
+		<property name="minimumConnectionCount" value="${proxool.minimumConnectionCount}" />
+		<property name="trace" value="${proxool.trace}" />
+		<property name="verbose" value="${proxool.verbose}" />
+		<property name="jmx" value="true" />
+	</bean>
+	
+	<bean id="systemEnv" class="tk.teemocode.module.util.SystemEnv" factory-method="getInstance">
+		<property name="initConvertorCache" value="${initConvertorCache}" />
+		<property name="superPwd" value="${superPwd}" />
+	</bean>
+</beans>

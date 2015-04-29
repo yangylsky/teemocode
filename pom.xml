@@ -19,6 +19,9 @@
 		<module>teemocode-dfs</module>
 		<module>teemocode-search</module>
 		<module>teemocode-modulebase</module>
+		<module>teemocode-module-identity</module>
+		<module>teemocode-session</module>
+		<module>teemocode-webbase</module>
 	</modules>
 
 	<!-- 项目依赖 -->
