@@ -32,15 +32,15 @@
 		<level value="ERROR" />
 	</logger>
 	
-	<logger name="com.teemocode">
+	<logger name="tk.teemocode">
 		<level value="DEBUG" />
 	</logger>
 	
-	<logger name="com.teemocode.module">
+	<logger name="tk.teemocode.module">
 		<level value="DEBUG" />
 	</logger>
 	
-	<logger name="com.teemocode.component">
+	<logger name="tk.teemocode.component">
 		<level value="ERROR" />
 	</logger>
 	
